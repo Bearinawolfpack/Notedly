@@ -1,7 +1,8 @@
 const express = require('express');
-const { ApolloServer, gql } = require('apollo-server-express');
+const { ApolloServer } = require('apollo-server-express');
 require('dotenv').config();
 
+const typeDefs = require('./schema');
 const db = require('./db');
 const models = require('./models');
 
@@ -10,27 +11,9 @@ const port = process.env.PORT || 4000;
 // Store the DB_HOST value as a variable
 const DB_HOST = process.env.DB_HOST;
 
-//Construct a schema, using GraphQL schema language
-const typeDefs = gql`
-  type Note {
-    id: ID
-    content: String
-    author: String
-  }
-  type Query {
-    hello: String
-    notes: [Note]
-    note(id: ID): Note
-  }
-  type Mutation {
-    newNote(content: String!): Note
-  }
-`;
-
 // Provide resolver functions to our schema fields
 const resolvers = {
   Query: {
-    hello: () => 'Hello World!',
     notes: async () => {
       return await models.Note.find();
     },
